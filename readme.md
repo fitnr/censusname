@@ -3,7 +3,6 @@ Random Names
 
 Generate random names based on US Census data, or files that you provide.
 
-
 Basic use:
 
 ````python
@@ -29,7 +28,7 @@ first.generate(given='male')
 
 ### Advanced
 
-You can pass your own names file to random_names to generate names with arbitary formatting. For each section of a name, a different sets of files can be used. This could be useful if you have name data broken down by time, geography, or any other variable. By default, male and female first name data from 1990 are combined with last name data from 2000.
+You can pass your own names file to `random_name` to generate names with arbitary formatting. For each section of a name, a different sets of files can be used. This could be useful if you have name data broken down by time, geography, or any other variable. By default, male and female first name data from 1990 are combined with last name data from 2000.
 
 Files must have two fields: `name` and `cumulative_frequency`. By default, the package expects comma-delimited files, buy you can pass in `csv.DictReader` arguments with the paramenter `csv_args`.
 
@@ -60,7 +59,7 @@ my_csv_args = {
 }
 ````
 
-The US Census names files don't contain every name, only those that cover about 90% of the population. With that in mind, `random_names` can take a `max_frequencies` argument to give these maximums. We specify these maximum with a dictionary whose keys are the file names.
+The US Census names files don't contain every name, only those that cover about 90% of the population. With that in mind, `random_name` can take a `max_frequencies` argument to give these maximums. We specify these maximum with a dictionary whose keys are the file names.
 If you give custom files but no `max_frequencies`, 100 will be used. (The max frequencies are hard coded for the default files.)
 
 ````python
@@ -91,10 +90,10 @@ from random_name import random_name
 
 my_generator = random_name(my_files, maximums, my_format, csv_args=my_csv_args)
 
-# Generate a name of the format 'Nombre Paterno y Materno'
+# Generate a name of the format 'Given Paternal y Maternal'
 my_generator.generate()
 
-# Use a different format: 'Nombre Paterno de Materno'
+# Use a different format:
 my_generator.generate(nameformat='{given} {paternal} de {maternal}')
 
 # Pick a name from the Sevilla files:
@@ -114,3 +113,33 @@ province = random.choice(['sevilla'] * 6 + ['toledo'] * 4)
 my_generator.generate(paternal=province, maternal=province)
 ````
 
+### Example: Middle Names
+
+Use the built-in data to fake middle names by randomly picking either a first or last name. It's unusual to :
+
+````python
+
+import random_name
+
+namefiles = random_name.NAMEFILES
+
+# Add a middle name entry to the name files
+namefiles['middle'] = {
+	'last': random_name.SURNAME2000,
+	'female': random_name.FEMALEFIRST1990,
+	'male': random_name.MALEFIRST1990
+}
+
+middle = random_name.random_name(namefiles, random_name.MAX_FREQUENCIES, '{given} {middle} {surname}')
+
+# Generate a name in the format "given, middle, surname"
+# However, this might return "John Mary Smith", which is probably an unlikely name
+middle.generate()
+
+# Generated name will have a male first name and either a male given or a surname as a middle name
+middle.generate(given='male', middle=['male', 'last'])
+
+# Generated name will have a female first name and either a male given or a surname as a middle name
+middle.generate(given='female', middle=['female', 'last'])
+
+````

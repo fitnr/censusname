@@ -47,6 +47,7 @@ NAMEFILES = {
 
 
 class random_name(object):
+
     """Generate a random name from an arbitary set of files"""
 
     def __init__(self, namefiles=None, max_frequencies=None, nameformat='{given} {surname}', **kwargs):
@@ -89,12 +90,20 @@ class random_name(object):
 
         return lines
 
-    def _pick_file(self, namepart, namekey=None):
-        if namekey:
-            return self.namefiles[namepart][namekey]
+    def _pick_file(self, namepart, namekeys=None):
+        result = None
 
-        else:
+        if type(namekeys) == str:
+            namekeys = [namekeys]
+
+        if namekeys:
+            key = random.choice(namekeys)
+            result = self.namefiles[namepart].get(key)
+
+        if result is None:
             return random.choice(self.namefiles[namepart].values())
+        else:
+            return result
 
     def pick_frequency_line(self, datafile, frequency, cumulativefield='cumulative_frequency'):
         '''Given a frequency, pick a line from a csv with a cumulative frequency field'''
