@@ -55,8 +55,9 @@ class random_name(object):
         if self.namefiles == NAMEFILES:
             self.max_frequencies = MAX_FREQUENCIES
 
+        # If no max frequencies given, assume they go to 100 for each file
         if max_frequencies is None:
-            max_frequencies = dict((namefiles[k][x], 100) for k in namefiles.keys() for x in namefiles[k])
+            max_frequencies = dict((self.namefiles[k][x], 100) for k in self.namefiles.keys() for x in self.namefiles[k])
 
         self.nameformat = nameformat
 

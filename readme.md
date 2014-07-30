@@ -33,7 +33,7 @@ You can pass your own names file to random_names to generate names with arbitary
 
 Files must have two fields: `name` and `cumulative_frequency`. By default, the package expects comma-delimited files, buy you can pass in `csv.DictReader` arguments with the paramenter `csv_args`.
 
-The `cumulative_frequency` field should be calculated based on ascending frequency, and should be a floating point number between from 0 to 100.
+The `cumulative_frequency` field should be calculated based on ascending frequency, and should be a number between from 0 to and some maximum - see the discussion of `max_frequencies` below.
 
 By default, the name generator looks at separate lists of male and female names. You can specify lists for arbitrary groupings of names. Let's say you have name distribution data for two provinces in Spain. In Spain, two surnames are used: the paternal and maternal, so you have four files total for surnames, as well as general files for male and female first names.
 
@@ -61,12 +61,19 @@ my_csv_args = {
 ````
 
 The US Census names files don't contain every name, only those that cover about 90% of the population. With that in mind, `random_names` can take a `max_frequencies` argument to give these maximums. We specify these maximum with a dictionary whose keys are the file names.
-By default, 100 will be used.
+If you give custom files but no `max_frequencies`, 100 will be used. (The max frequencies are hard coded for the default files.)
 
 ````python
 maximums = {
 	'given-male.txt': 89.75356,
 	'maternal-sevilla.txt': 90.483,
+	# etc
+}
+
+# Or, you may have a file where frequencies go from 0 to 1:
+maximums = {
+	'given-male.txt': 0.8975356,
+	'maternal-sevilla.txt': 0.90483,
 	# etc
 }
 ````
