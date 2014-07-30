@@ -12,55 +12,58 @@ full_path = lambda filename: abspath(join(dirname(__file__), filename))
 # Name files should have at least the following columns:
 # name (string)
 # cumul_frequency (float) number from 0 to 100
-surname2000 = full_path("data/dist.all.last.2000.csv")
-surname1990 = full_path("data/dist.all.last.1990.csv")
-malefirst1990 = full_path("data/dist.male.first.1990.csv")
-femalefirst1990 = full_path("data/dist.female.first.1990.csv")
+SURNAME2000 = full_path("data/dist.all.last.2000.csv")
+SURNAME1990 = full_path("data/dist.all.last.1990.csv")
+MALEFIRST1990 = full_path("data/dist.male.first.1990.csv")
+FEMALEFIRST1990 = full_path("data/dist.female.first.1990.csv")
 
 # Name files don't contain every name, so hard coding the maximum frequency here.
 # This way we don't over-pick the least common names
-max_freqencies = {
-    surname2000: 89.75356,
-    surname1990: 90.483,
-    malefirst1990: 90.040,
-    femalefirst1990: 90.024
+MAX_FREQUENCIES = {
+    SURNAME2000: 89.75356,
+    SURNAME1990: 90.483,
+    MALEFIRST1990: 90.040,
+    FEMALEFIRST1990: 90.024
 }
 
-givennamefiles = {
-    'male': malefirst1990,
-    'female': femalefirst1990
+GIVENNAMEFILES = {
+    'male': MALEFIRST1990,
+    'female': FEMALEFIRST1990
 }
 
 # 1990 is commented out because it's (a) out of date (b) not based on a random sample anyway
-# Feel free to use it by doing something like: 
+# Feel free to use it by doing something like:
 # import random_names
-# my_surnamefiles = { 1990: random_names.surname1990 }
-surnamefiles = {
-    2000: surname2000,
-    # 1990: surname1990
+# my_surnamefiles = { 1990: random_names.SURNAME1990 }
+SURNAMEFILES = {
+    2000: SURNAME2000,
+    # 1990: SURNAME1990
 }
 
-namefiles = {
-    'given': givennamefiles,
-    'surname': surnamefiles
+NAMEFILES = {
+    'given': GIVENNAMEFILES,
+    'surname': SURNAMEFILES
 }
 
 
 class random_name(object):
     """Generate a random name from an arbitary set of files"""
 
-    def __init__(self, namefiles=namefiles, max_freqencies=max_freqencies, nameformat='{given} {surname}', **kwargs):
-        if max_freqencies is None:
-            max_freqencies = dict((k, 100) for k in givennamefiles.values() + surnamefiles.values())
+    def __init__(self, namefiles=None, max_frequencies=None, nameformat='{given} {surname}', **kwargs):
+        self.namefiles = namefiles or NAMEFILES
 
-        self.max_freqencies = max_freqencies
-        self.namefiles = namefiles
+        if self.namefiles == NAMEFILES:
+            self.max_frequencies = MAX_FREQUENCIES
+
+        if max_frequencies is None:
+            max_frequencies = dict((namefiles[k][x], 100) for k in namefiles.keys() for x in namefiles[k])
+
         self.nameformat = nameformat
 
         if 'csv_args' in kwargs:
             self.csv_args = kwargs['csv_args']
         else:
-            self.csv_args = {delimiter: ','}
+            self.csv_args = {'delimiter': ','}
 
     def generate(self, nameformat=None, capitalize=True, **kwargs):
         '''Pick a random name form a specified list of name parts'''
@@ -80,7 +83,7 @@ class random_name(object):
 
         for namepart in self.namefiles.keys():
             datafile = self._pick_file(namepart, nametypes.get(namepart, None))
-            frequency = random.uniform(0, max_freqencies[datafile])
+            frequency = random.uniform(0, self.max_frequencies[datafile])
             lines[namepart] = self.pick_frequency_line(datafile, frequency)
 
         return lines
@@ -103,5 +106,5 @@ class random_name(object):
 
 if __name__ == '__main__':
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:
-    rn = random_name(namefiles, max_freqencies, '{given} {surname}', csv_args={'delimiter': ','})
+    rn = random_name(NAMEFILES, MAX_FREQUENCIES, '{given} {surname}', csv_args={'delimiter': ','})
     print rn.generate()
