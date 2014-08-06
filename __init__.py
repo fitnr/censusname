@@ -1,7 +1,10 @@
 from os.path import abspath, join, dirname
 import random
 import csv
-import reformats as reformats
+try:
+    from . import reformats
+except ValueError:
+    import reformats
 
 __title__ = 'random_names'
 __version__ = '0.1'
