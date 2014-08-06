@@ -1,6 +1,7 @@
 from os.path import abspath, join, dirname
 import random
 import csv
+import reformats as reformats
 
 __title__ = 'random_names'
 __version__ = '0.1'
@@ -45,6 +46,9 @@ NAMEFILES = {
     'surname': SURNAMEFILES
 }
 
+REFORMATS = {
+    'surname': reformats.surname
+}
 
 class random_name(object):
 
@@ -67,6 +71,11 @@ class random_name(object):
         else:
             self.csv_args = {'delimiter': ','}
 
+        if 'reformats' in kwargs:
+            self.reformats = kwargs['reformats']
+        else:
+            self.reformats = REFORMATS
+
     def generate(self, nameformat=None, capitalize=True, **kwargs):
         '''Pick a random name form a specified list of name parts'''
         if nameformat is None:
@@ -77,6 +86,11 @@ class random_name(object):
 
         if capitalize:
             names = dict((k, n.capitalize()) for k, n in names.items())
+
+            if self.reformats:
+                for key, these_reformats in self.reformats.items():
+                    for reformat in these_reformats:
+                        names[key] = reformats.replace(names[key], reformat)
 
         return nameformat.format(**names)
 
