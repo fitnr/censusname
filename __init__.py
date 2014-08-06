@@ -3,11 +3,11 @@ import random
 import csv
 try:
     from . import reformats
-except ValueError:
+except (ValueError, ImportError):
     import reformats
 
 __title__ = 'random_names'
-__version__ = '0.1'
+__version__ = '0.1.1'
 __author__ = 'Neil Freeman'
 __license__ = 'MIT'
 
