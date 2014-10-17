@@ -33,10 +33,10 @@ GIVENNAMEFILES = {
 # 1990 is commented out because it's (a) out of date (b) not based on a random sample anyway
 # Feel free to use it by doing something like:
 # import random_names
-# my_surnamefiles = { 1990: random_names.SURNAME1990 }
+# my_surnamefiles = { '1990': random_names.SURNAME1990 }
 SURNAMEFILES = {
-    2000: SURNAME2000,
-    # 1990: SURNAME1990
+    '2000': SURNAME2000,
+    # '1990': SURNAME1990
 }
 
 NAMEFILES = {
@@ -96,6 +96,7 @@ class random_name(object):
     def _get_lines(self, nametypes):
         datafile, frequency, lines = '', 0.0, {}
 
+        # The key of each name file is its namepart, e.g. surname or given
         for namepart in self.namefiles.keys():
             datafile = self._pick_file(namepart, nametypes.get(namepart, None))
             frequency = random.uniform(0, self.max_frequencies[datafile])
@@ -106,7 +107,7 @@ class random_name(object):
     def _pick_file(self, namepart, namekeys=None):
         result = None
 
-        if type(namekeys) == str:
+        if type(namekeys) is not list:
             namekeys = [namekeys]
 
         if namekeys:
