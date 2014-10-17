@@ -3,27 +3,77 @@ Random Names
 
 Generate random names based on US Census data, or files that you provide.
 
-Basic use:
+### Basic use
 
 ````python
 from random_name import random_name
 
-rn = random_name(nameformat='{given}')
+rn = random_name()
+
 rn.generate()
+'Jane Smith'
 ````
 
-To generate just first names:
+### Functions and Objects
+
+#### `random_name`
+
+The `random_name` object is the meat of the module. The formatting of the names it generates can be easily customized.
 
 ````python
 from random_name import random_name
 
+# The simplest way to customize random_name is with the name_format argument
+# It takes a string with two formatting keys: 'given' and 'surname'
+# (This should look familiar from Python's [Str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin.)
+
+# Generate first names
 first = random_name(nameformat='{given}')
 
-# Returns a first name
-first.generate()
+# Generate names in last, first format
+last_first = random_name(nameformat='{surname}, {given')
 
-# Returns a male first name 
-first.generate(given='male')
+first.generate()
+'Linda'
+
+last_first.generate()
+'Nguyen, Pamela'
+````
+
+#### `random_name.generate`
+
+The `generate` function can be further customized. It also takes the nameformat argument, which overrides the default passed to `random_name`:
+
+````python
+rn.generate()
+'Michael Fox'
+
+# Add the same middle initial to all names
+rn.generate(nameformat='{given} J. {surname}')
+'Michael J. Fox'
+````
+
+Each part of the name is also a keyword argument. The default data set includes given name files broken up into male and female names. The module can be told to always use a certain file:
+
+````python
+
+rn.generate(given='female')
+'Caroline Dippold'
+````
+
+Since the argument to `nameformat` is passed to Str.format, use any string formatting options, like padding:
+
+````python
+
+rn.generate(nameformat='{given:10}', given='male')
+'Charles   '
+````
+
+The default dataset in random_names gives all names totally capitalized, and random_name changes them to title case. This can be turned off:
+
+````python
+rn.generate(capitalize=False)
+'JOSE PETRIE'
 ````
 
 ### Advanced
