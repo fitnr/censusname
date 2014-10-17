@@ -193,8 +193,9 @@ namefiles['middle'] = {
 rn_middle = random_name.random_name(namefiles, random_name.MAX_FREQUENCIES, '{given} {middle} {surname}')
 
 # Generate a name in the format "given, middle, surname"
-# However, this might return "John Mary Smith", which is probably an unlikely name
+# However, this might return unlikely names
 rn_middle.generate()
+'John Mary Smith'
 
 # Generated name will have a male first name and either a male given name or a surname as a middle name
 rn_middle.generate(given='male', middle=['male', 'last'])
@@ -242,6 +243,4 @@ import random_name
 my_formatters = {
 	'surname': [random_name.formatters.recapitalize_surnames, custom_fuction]	
 }
-
-rn = random_name(formatters=my_formatters)
 ````
