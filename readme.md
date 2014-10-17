@@ -20,12 +20,11 @@ rn.generate()
 
 The `random_name` object is the meat of the module. The formatting of the names it generates can be easily customized.
 
+The simplest way to customize random_name is with the name_format argument
+It takes a string with two formatting keys: 'given' and 'surname' (The format should look familiar from Python's [str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin).
+
 ````python
 from random_name import random_name
-
-# The simplest way to customize random_name is with the name_format argument
-# It takes a string with two formatting keys: 'given' and 'surname'
-# (This should look familiar from Python's [str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin.)
 
 # Generate first names
 first = random_name(nameformat='{given}')
@@ -110,9 +109,9 @@ my_files = {
 	}
 }
 
-# Specify arguments for how you want csv.DictReader to read your files.
+# Perhaps you want to specify arguments to csv.DictReader, which will be reading the files
 my_csv_args = {
-	delimiter = "\t"
+	# Any arguments that can be passed to DictReader
 }
 ````
 
@@ -120,16 +119,17 @@ The US Census names files don't contain every name, only those that cover about 
 If you give custom files but no `max_frequencies`, 100 will be used. (The max frequencies are hard coded for the default files.)
 
 ````python
+# These are made-up numbers. Perhaps you prefer percentages:
 maximums = {
-	'given-male.txt': 89.75356,
-	'maternal-sevilla.txt': 90.483,
+	'given-male.txt': 89.7,
+	'maternal-sevilla.txt': 90.4,
 	# etc
 }
 
-# Or, you may have a file where frequencies go from 0 to 1:
+# Or, you have a file where frequencies go from 0 to 1:
 maximums = {
-	'given-male.txt': 0.8975356,
-	'maternal-sevilla.txt': 0.90483,
+	'given-male.txt': 0.897,
+	'maternal-sevilla.txt': 0.904,
 	# etc
 }
 ````
@@ -145,34 +145,37 @@ Generating names with these examples:
 ````python
 from random_name import random_name
 
-my_generator = random_name(my_files, maximums, my_format, csv_args=my_csv_args)
+my_generator = random_name(nameformat=my_format, namefiles=my_files, max_frequencies=maximums, csv_args=my_csv_args)
 
 # Generate a name of the format 'Given Paternal y Maternal'
 my_generator.generate()
+'Luis de Góngora y Argote'
 
 # Use a different format:
 my_generator.generate(nameformat='{given} {paternal} de {maternal}')
+'Pedro López de Ayala'
 
 # Pick a name from the Sevilla files:
 my_generator.generate(maternal='sevilla', paternal='sevilla')
 
 # Pick a female name from the Toledo files:
-# Note that any of the keys in my_files can be used as keyword arguments. The values should be sections
+# Note that any of the keys in my_files can be used as keyword arguments. The values should be keys from the respective dictionary.
 my_generator.generate(given='female', maternal='toledo', paternal='toledo')
 
-# Pick a name using the capitalization in the files:
+# By default, names are capitalized (title case).
+# Generate a name using given capitalization in the files:
 my_generator.generate(capitalize=False)
 
 # By default, there's an equal probability of producing a name with a part from the Sevilla or Toledo lists.
 # You have to do a little extra to weight that probability.
-# Specify an 60% chance of a sevilla name, 40% chance of a toledo name:
-province = random.choice(['sevilla'] * 6 + ['toledo'] * 4)
+# Specify an 75% chance of a sevilla name, 25% chance of a toledo name:
+province = random.choice(['sevilla'] * 3 + ['toledo'])
 my_generator.generate(paternal=province, maternal=province)
 ````
 
 ### Example: Middle Names
 
-Use the built-in data to fake middle names by randomly picking either a first or last name. It's unusual to :
+Use the built-in data to fake middle names by randomly picking either a first or last name:
 
 ````python
 
@@ -187,17 +190,20 @@ namefiles['middle'] = {
 	'male': random_name.MALEFIRST1990
 }
 
-middle = random_name.random_name(namefiles, random_name.MAX_FREQUENCIES, '{given} {middle} {surname}')
+rn_middle = random_name.random_name(namefiles, random_name.MAX_FREQUENCIES, '{given} {middle} {surname}')
 
 # Generate a name in the format "given, middle, surname"
 # However, this might return "John Mary Smith", which is probably an unlikely name
-middle.generate()
+rn_middle.generate()
 
-# Generated name will have a male first name and either a male given or a surname as a middle name
-middle.generate(given='male', middle=['male', 'last'])
+# Generated name will have a male first name and either a male given name or a surname as a middle name
+rn_middle.generate(given='male', middle=['male', 'last'])
+'Charles Michael Brescia'
 
-# Generated name will have a female first name and either a male given or a surname as a middle name
-middle.generate(given='female', middle=['female', 'last'])
+# Generated name will have a female first name and either a female given name or a surname as a middle name
+rn_middle.generate(given='female', middle=['female', 'last'])
+'Mildred Hoang Hutton'
+````
 
 #### Formatters
 
