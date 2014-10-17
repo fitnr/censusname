@@ -53,7 +53,7 @@ class random_name(object):
 
     """Generate a random name from an arbitary set of files"""
 
-    def __init__(self, namefiles=None, max_frequencies=None, nameformat='{given} {surname}', **kwargs):
+    def __init__(self, nameformat='{given} {surname}', namefiles=None, max_frequencies=None, **kwargs):
         self.namefiles = namefiles or NAMEFILES
 
         if self.namefiles == NAMEFILES:
@@ -131,5 +131,5 @@ class random_name(object):
 
 if __name__ == '__main__':
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:
-    rn = random_name(NAMEFILES, MAX_FREQUENCIES, '{given} {surname}', csv_args={'delimiter': ','})
+    rn = random_name('{given} {surname}', NAMEFILES, MAX_FREQUENCIES, csv_args={'delimiter': ','})
     print rn.generate()
