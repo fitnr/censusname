@@ -1,4 +1,5 @@
 from os.path import abspath, join, dirname
+from pkg_resources import resource_stream
 import random
 import csv
 try:
@@ -6,20 +7,14 @@ try:
 except (ValueError, ImportError):
     import reformats
 
-__title__ = 'random_names'
-__version__ = '0.1.1'
-__author__ = 'Neil Freeman'
-__license__ = 'MIT'
-
-full_path = lambda filename: abspath(join(dirname(__file__), filename))
-
 # Name files should have at least the following columns:
 # name (string)
 # cumul_frequency (float) number from 0 to 100
-SURNAME2000 = full_path("data/dist.all.last.2000.csv")
-SURNAME1990 = full_path("data/dist.all.last.1990.csv")
-MALEFIRST1990 = full_path("data/dist.male.first.1990.csv")
-FEMALEFIRST1990 = full_path("data/dist.female.first.1990.csv")
+
+SURNAME2000 = resource_stream('random_name', "data/dist.all.last.2000.csv")
+SURNAME1990 = resource_stream('random_name', "data/dist.all.last.1990.csv")
+MALEFIRST1990 = resource_stream('random_name', "data/dist.male.first.1990.csv")
+FEMALEFIRST1990 = resource_stream('random_name', "data/dist.female.first.1990.csv")
 
 # Name files don't contain every name, so hard coding the maximum frequency here.
 # This way we don't over-pick the least common names
@@ -52,6 +47,7 @@ NAMEFILES = {
 REFORMATS = {
     'surname': reformats.surname
 }
+
 
 class random_name(object):
 
@@ -122,14 +118,15 @@ class random_name(object):
         else:
             return result
 
-    def pick_frequency_line(self, datafile, frequency, cumulativefield='cumulative_frequency'):
+    def pick_frequency_line(self, datastream, frequency, cumulativefield='cumulative_frequency'):
         '''Given a frequency, pick a line from a csv with a cumulative frequency field'''
-        with open(datafile, 'r') as f:
-            reader = csv.DictReader(f, **self.csv_args)
 
-            for line in reader:
-                if float(line[cumulativefield]) >= frequency:
-                    return line
+        datastream.seek(0)
+        reader = csv.DictReader(datastream, **self.csv_args)
+
+        for line in reader:
+            if float(line[cumulativefield]) >= frequency:
+                return line
 
 if __name__ == '__main__':
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:
