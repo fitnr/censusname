@@ -25,7 +25,7 @@ from random_name import random_name
 
 # The simplest way to customize random_name is with the name_format argument
 # It takes a string with two formatting keys: 'given' and 'surname'
-# (This should look familiar from Python's [Str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin.)
+# (This should look familiar from Python's [str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin.)
 
 # Generate first names
 first = random_name(nameformat='{given}')
@@ -69,12 +69,19 @@ rn.generate(nameformat='{given:10}', given='male')
 'Charles   '
 ````
 
-The default dataset in random_names gives all names totally capitalized, and random_name changes them to title case. This can be turned off:
+The default dataset in random_names gives all names totally capitalized, and random_name changes them to title case. This can be turned off with a the capitalize argument, which works for both `random_name` and `random_name.generate`:
 
 ````python
-rn.generate(capitalize=False)
+rn = random_name(capitalize=False)
+rn.generate()
 'JOSE PETRIE'
+
+rn2 = random_name()
+rn2.generate(capitalize=False)
+'WES REAVES'
 ````
+
+Yes, it's a bit strange for `capitalize=False` to result in uppercase names. The false omits [str.capitalize](https://docs.python.org/2/library/stdtypes.html#str.capitalize), so the default capitalization from the raw data shines through, which happens to be all uppercase. You can customize the module arbitrary reformatting functions. Read on!
 
 ### Advanced
 
@@ -192,4 +199,43 @@ middle.generate(given='male', middle=['male', 'last'])
 # Generated name will have a female first name and either a male given or a surname as a middle name
 middle.generate(given='female', middle=['female', 'last'])
 
+#### Formatters
+
+You can specify arbitary reformatting functions that are run on each part of the name before they are returned. By default, the package includes a surname formatter that tries to intelligently format names like in the raw data like OHALLORAN (to O'Halloran).
+
+You can specify formatters with a dict that targets each part of a name. The formatters should be a list of functions.
+
+````python
+
+my_formatters = {
+	'given': [lambda x: x[::-1]], # reverse a string
+	'surname': [lambda x: "De " + x],
+}
+
+rn = random_name(formatters=my_formatters)
+rn.generate()
+'ekiM De Morgan'
+````
+
+Additional formatters can be added to `random_name.generate`, they will be run in addition to any formatters included in the object.
+
+````python
+more_formatters = {
+	'given': [lambda x: x.replace('a', 'b')]
+}
+
+rn.generate(formatters=more_formatters)
+'nbhtbN De Scardino'
+````
+
+Note that passing a formatters argument to `random_name` will exclude the default surname formatter. It's easy enough to keep it, though:
+
+````python
+import random_name
+
+my_formatters = {
+	'surname': [random_name.formatters.recapitalize_surnames, custom_fuction]	
+}
+
+rn = random_name(formatters=my_formatters)
 ````

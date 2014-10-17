@@ -3,9 +3,9 @@ from pkg_resources import resource_stream
 import random
 import csv
 try:
-    from . import reformats
+    from . import formatters
 except (ValueError, ImportError):
-    import reformats
+    import formatters
 
 # Name files should have at least the following columns:
 # name (string)
@@ -44,8 +44,8 @@ NAMEFILES = {
     'surname': SURNAMEFILES
 }
 
-REFORMATS = {
-    'surname': reformats.surname
+FORMATTERS = {
+    'surname': [formatters.recapitalize_surnames]
 }
 
 
@@ -70,15 +70,26 @@ class random_name(object):
         else:
             self.csv_args = {'delimiter': ','}
 
-        if 'reformats' in kwargs:
-            self.reformats = kwargs['reformats']
-        else:
-            self.reformats = REFORMATS
+        if 'formatters' in kwargs:
+            if type(kwargs['formatters']) is not dict:
+                raise TypeError("Keyword argument 'formatters' for random_name() must be a dict.")
 
-    def generate(self, nameformat=None, capitalize=True, **kwargs):
+            self.formatters = kwargs['formatters']
+        else:
+            self.formatters = FORMATTERS
+
+        if 'capitalize' in kwargs:
+            self.capitalize = kwargs['capitalize']
+        else:
+            self.capitalize = True
+
+    def generate(self, nameformat=None, capitalize=None, formatters={}, **kwargs):
         '''Pick a random name form a specified list of name parts'''
         if nameformat is None:
             nameformat = self.nameformat
+
+        if capitalize is None:
+            capitalize = self.capitalize
 
         lines = self._get_lines(kwargs)
         names = dict((k, v['name']) for k, v in lines.items())
@@ -86,10 +97,21 @@ class random_name(object):
         if capitalize:
             names = dict((k, n.capitalize()) for k, n in names.items())
 
-            if self.reformats:
-                for key, these_reformats in self.reformats.items():
-                    for reformat in these_reformats:
-                        names[key] = reformats.replace(names[key], reformat)
+        merged_formatters = dict()
+
+        try:
+            merged_formatters = dict(
+                (k, self.formatters.get(k, []) + formatters.get(k, [])) for k in set(self.formatters.keys() + formatters.keys())
+            )
+        except AttributeError, e:
+            raise TypeError("keyword argument 'formatters' for random_name.generate() must be a dict")
+
+        if merged_formatters:
+            for key, functions in merged_formatters.items():
+                # 'surname', [func_a, func_b]
+                for func in functions:
+                    # names['surname'] = func_a(name['surname'])
+                    names[key] = func(names[key])
 
         return nameformat.format(**names)
 
