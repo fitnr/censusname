@@ -41,7 +41,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'random_name=random_name:main',
+            'random_name=random_name.random_name:main',
         ],
     },
 

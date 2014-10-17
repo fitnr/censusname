@@ -151,7 +151,10 @@ class random_name(object):
             if float(line[cumulativefield]) >= frequency:
                 return line
 
-if __name__ == '__main__':
+def main():
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:
     rn = random_name('{given} {surname}', NAMEFILES, MAX_FREQUENCIES, csv_args={'delimiter': ','})
     print rn.generate()
+
+if __name__ == '__main__':
+    main()
