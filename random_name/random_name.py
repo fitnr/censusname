@@ -2,10 +2,7 @@ from os.path import abspath, join, dirname
 from pkg_resources import resource_stream
 import random
 import csv
-try:
-    from . import formatters
-except (ValueError, ImportError):
-    import formatters
+import formatters
 
 # Name files should have at least the following columns:
 # name (string)
@@ -150,6 +147,7 @@ class random_name(object):
         for line in reader:
             if float(line[cumulativefield]) >= frequency:
                 return line
+
 
 def main():
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:
