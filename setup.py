@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='random_name',
 
-    version='0.1.2',
+    version='0.1.3',
 
     description='Generate random names',
 
