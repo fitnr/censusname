@@ -51,7 +51,7 @@ FORMATTERS = {
 
 class random_name(object):
 
-    """Generate a random name from an arbitary set of files"""
+    """Generate a random name from an arbitrary set of files"""
 
     def __init__(self, nameformat='{given} {surname}', namefiles=None, max_frequencies=None, **kwargs):
         self.namefiles = namefiles or NAMEFILES

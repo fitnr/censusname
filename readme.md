@@ -208,7 +208,7 @@ rn_middle.generate(given='female', middle=['female', 'last'])
 
 #### Formatters
 
-You can specify arbitary reformatting functions that are run on each part of the name before they are returned. By default, the package includes a surname formatter that tries to intelligently format names like in the raw data like OHALLORAN (to O'Halloran).
+You can specify arbitary reformatting functions that are run on each part of the name before they are returned. By default, the package includes a surname formatter that tries to intelligently format raw names like OHALLORAN (to O'Halloran).
 
 You can specify formatters with a dict that targets each part of a name. The formatters should be a list of functions.
 
