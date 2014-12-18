@@ -1,8 +1,7 @@
-from os.path import abspath, join, dirname
 from pkg_resources import resource_stream
 import random
 import csv
-import formatters
+from . import formatters
 
 # Name files should have at least the following columns:
 # name (string)
@@ -100,7 +99,7 @@ class random_name(object):
             merged_formatters = dict(
                 (k, self.formatters.get(k, []) + formatters.get(k, [])) for k in set(self.formatters.keys() + formatters.keys())
             )
-        except AttributeError, e:
+        except AttributeError:
             raise TypeError("keyword argument 'formatters' for random_name.generate() must be a dict")
 
         if merged_formatters:
