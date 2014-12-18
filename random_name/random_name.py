@@ -57,7 +57,7 @@ class random_name(object):
 
         # If no max frequencies given, assume they go to 100 for each file
         if max_frequencies is None:
-            max_frequencies = dict((self.namefiles[k][x], 100) for k in self.namefiles.keys() for x in self.namefiles[k])
+            max_frequencies = dict((self.namefiles[k][x], 100) for k in list(self.namefiles.keys()) for x in self.namefiles[k])
 
         self.nameformat = nameformat
 
@@ -88,22 +88,22 @@ class random_name(object):
             capitalize = self.capitalize
 
         lines = self._get_lines(kwargs)
-        names = dict((k, v['name']) for k, v in lines.items())
+        names = dict((k, v['name']) for k, v in list(lines.items()))
 
         if capitalize:
-            names = dict((k, n.capitalize()) for k, n in names.items())
+            names = dict((k, n.capitalize()) for k, n in list(names.items()))
 
         merged_formatters = dict()
 
         try:
             merged_formatters = dict(
-                (k, self.formatters.get(k, []) + formatters.get(k, [])) for k in set(self.formatters.keys() + formatters.keys())
+                (k, self.formatters.get(k, []) + formatters.get(k, [])) for k in set(list(self.formatters.keys()) + list(formatters.keys()))
             )
         except AttributeError:
             raise TypeError("keyword argument 'formatters' for random_name.generate() must be a dict")
 
         if merged_formatters:
-            for key, functions in merged_formatters.items():
+            for key, functions in list(merged_formatters.items()):
                 # 'surname', [func_a, func_b]
                 for func in functions:
                     # names['surname'] = func_a(name['surname'])
@@ -115,7 +115,7 @@ class random_name(object):
         datafile, frequency, lines = '', 0.0, {}
 
         # The key of each name file is its namepart, e.g. surname or given
-        for namepart in self.namefiles.keys():
+        for namepart in list(self.namefiles.keys()):
             datafile = self._pick_file(namepart, nametypes.get(namepart, None))
             frequency = random.uniform(0, self.max_frequencies[datafile])
             lines[namepart] = self.pick_frequency_line(datafile, frequency)
@@ -133,7 +133,7 @@ class random_name(object):
             result = self.namefiles[namepart].get(key)
 
         if result is None:
-            return random.choice(self.namefiles[namepart].values())
+            return random.choice(list(self.namefiles[namepart].values()))
         else:
             return result
 
@@ -151,7 +151,7 @@ class random_name(object):
 def main():
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:
     rn = random_name('{given} {surname}', NAMEFILES, MAX_FREQUENCIES, csv_args={'delimiter': ','})
-    print rn.generate()
+    print(rn.generate())
 
 if __name__ == '__main__':
     main()
