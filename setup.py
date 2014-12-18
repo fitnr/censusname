@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='random_name',
 
-    version='0.1.3',
+    version='0.1.4',
 
     description='Generate random names',
 
