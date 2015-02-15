@@ -1,15 +1,33 @@
 from setuptools import setup
 
+
+try:
+    from pypandoc import convert
+    def read_md(f):
+        try:
+            return convert(f, 'rst')
+        except IOError:
+            return ''
+
+except ImportError:
+    print("pypandoc module not found, could not convert Markdown to RST")
+    def read_md(f):
+        try:
+            return open(f, 'r').read()
+        except IOError:
+            return ''
+
+
 setup(
-    name='random_name',
+    name='censusname',
 
     version='0.1.4',
 
     description='Generate random names',
 
-    long_description="Generate random names based on US Census data, or files that you provide.",
+    long_description="Generate random names based on US Census data, or other data you provide.",
 
-    url='https://github.com/fitnr/random_name',
+    url='https://github.com/fitnr/censusname',
 
     author='Neil Freeman',
 
@@ -30,17 +48,17 @@ setup(
 
     keywords='names development random',
 
-    packages=['random_name', 'random_name/utils'],
+    packages=['censusname',],
 
     package_data={
-        'random_name': ['data/*.csv'],
+        'censusname': ['data/*.csv'],
     },
 
     zip_safe=True,
 
     entry_points={
         'console_scripts': [
-            'random_name=random_name.random_name:main',
+            'censusname=censusname.censusname:main',
         ],
     },
 

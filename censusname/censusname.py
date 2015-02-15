@@ -22,10 +22,10 @@ from . import formatters
 # name (string)
 # cumul_frequency (float) number from 0 to 100
 
-SURNAME2000 = resource_stream('random_name', "data/dist.all.last.2000.csv")
-SURNAME1990 = resource_stream('random_name', "data/dist.all.last.1990.csv")
-MALEFIRST1990 = resource_stream('random_name', "data/dist.male.first.1990.csv")
-FEMALEFIRST1990 = resource_stream('random_name', "data/dist.female.first.1990.csv")
+SURNAME2000 = resource_stream('censusname', "data/dist.all.last.2000.csv")
+SURNAME1990 = resource_stream('censusname', "data/dist.all.last.1990.csv")
+MALEFIRST1990 = resource_stream('censusname', "data/dist.male.first.1990.csv")
+FEMALEFIRST1990 = resource_stream('censusname', "data/dist.female.first.1990.csv")
 
 # Name files don't contain every name, so hard coding the maximum frequency here.
 # This way we don't over-pick the least common names
@@ -43,8 +43,8 @@ GIVENNAMEFILES = {
 
 # 1990 is commented out because it's (a) out of date (b) not based on a random sample anyway
 # Feel free to use it by doing something like:
-# import random_names
-# my_surnamefiles = { '1990': random_names.SURNAME1990 }
+# from censusname import censusname
+# my_surnamefiles = { '1990': censusname.SURNAME1990 }
 SURNAMEFILES = {
     '2000': SURNAME2000,
     # '1990': SURNAME1990
@@ -60,7 +60,7 @@ FORMATTERS = {
 }
 
 
-class random_name(object):
+class Censusname(object):
 
     """Generate a random name from an arbitrary set of files"""
 
@@ -83,7 +83,7 @@ class random_name(object):
 
         if 'formatters' in kwargs:
             if type(kwargs['formatters']) is not dict:
-                raise TypeError("Keyword argument 'formatters' for random_name() must be a dict.")
+                raise TypeError("Keyword argument 'formatters' for censusname() must be a dict.")
 
             self.formatters = kwargs['formatters']
         else:
@@ -115,7 +115,7 @@ class random_name(object):
                 (k, self.formatters.get(k, []) + formatters.get(k, [])) for k in set(list(self.formatters.keys()) + list(formatters.keys()))
             )
         except AttributeError:
-            raise TypeError("keyword argument 'formatters' for random_name.generate() must be a dict")
+            raise TypeError("keyword argument 'formatters' for Censusname.generate() must be a dict")
 
         if merged_formatters:
             for key, functions in list(merged_formatters.items()):
@@ -165,8 +165,8 @@ class random_name(object):
 
 def main():
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:
-    rn = random_name('{given} {surname}', NAMEFILES, MAX_FREQUENCIES, csv_args={'delimiter': ','})
-    print(rn.generate())
+    cn = Censusname('{given} {surname}', NAMEFILES, MAX_FREQUENCIES, csv_args={'delimiter': ','})
+    print(cn.generate())
 
 if __name__ == '__main__':
     main()

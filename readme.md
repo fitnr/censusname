@@ -1,4 +1,4 @@
-Random Names
+Census Name
 ============
 
 Generate random names based on US Census data, or files that you provide.
@@ -6,31 +6,31 @@ Generate random names based on US Census data, or files that you provide.
 ### Basic use
 
 ````python
-from random_name import random_name
+from censusname import Censusname
 
-rn = random_name()
+cn = Censusname()
 
-rn.generate()
+cn.generate()
 'Jane Smith'
 ````
 
 ### Functions and Objects
 
-#### `random_name`
+#### `Censusname`
 
-The `random_name` object is the meat of the module. The formatting of the names it generates can be easily customized.
+The `Censusname` object is the meat of the module. The formatting of the names it generates can be easily customized.
 
-The simplest way to customize random_name is with the name_format argument
+The simplest way to customize Censusname is with the name_format argument
 It takes a string with two formatting keys: 'given' and 'surname' (The format should look familiar from Python's [str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin).
 
 ````python
-from random_name import random_name
+from censusname import Censusname
 
 # Generate first names
-first = random_name(nameformat='{given}')
+first = Censusname(nameformat='{given}')
 
 # Generate names in last, first format
-last_first = random_name(nameformat='{surname}, {given')
+last_first = Censusname(nameformat='{surname}, {given')
 
 first.generate()
 'Linda'
@@ -39,23 +39,24 @@ last_first.generate()
 'Nguyen, Pamela'
 ````
 
-#### `random_name.generate`
+#### `Censusname.generate`
 
-The `generate` function can be further customized. It also takes the nameformat argument, which overrides the default passed to `random_name`:
+The `generate` function can be further customized. It also takes the nameformat argument, which overrides the default passed to `Censusname`:
 
 ````python
-rn.generate()
+cn = Censusname()
+
+cn.generate()
 'Michael Fox'
 
 # Add the same middle initial to all names
-rn.generate(nameformat='{given} J. {surname}')
+cn.generate(nameformat='{given} J. {surname}')
 'Michael J. Fox'
 ````
 
 Each part of the name is also a keyword argument. The default data set includes given name files broken up into male and female names. The module can be told to always use a certain file:
 
 ````python
-
 rn.generate(given='female')
 'Caroline Dippold'
 ````
@@ -63,20 +64,19 @@ rn.generate(given='female')
 Since the argument to `nameformat` is passed to Str.format, use any string formatting options, like padding:
 
 ````python
-
-rn.generate(nameformat='{given:10}', given='male')
+cn.generate(nameformat='{given:10}', given='male')
 'Charles   '
 ````
 
-The default dataset in random_names gives all names totally capitalized, and random_name changes them to title case. This can be turned off with a the capitalize argument, which works for both `random_name` and `random_name.generate`:
+The default dataset in censusname gives all names totally capitalized, and censusname changes them to title case. This can be turned off with a the capitalize argument, which works for both `Censusname` and `Censusname.generate`:
 
 ````python
-rn = random_name(capitalize=False)
-rn.generate()
+cn = Censusname(capitalize=False)
+cn.generate()
 'JOSE PETRIE'
 
-rn2 = random_name()
-rn2.generate(capitalize=False)
+cn2 = Censusname()
+cn2.generate(capitalize=False)
 'WES REAVES'
 ````
 
@@ -84,7 +84,7 @@ Yes, it's a bit strange for `capitalize=False` to result in uppercase names. The
 
 ### Advanced
 
-You can pass your own names file to `random_name` to generate names with arbitary formatting. For each section of a name, a different sets of files can be used. This could be useful if you have name data broken down by time, geography, or any other variable. By default, male and female first name data from 1990 are combined with last name data from 2000.
+You can pass your own names file to `Censusname` to generate names with arbitary formatting. For each section of a name, a different sets of files can be used. This could be useful if you have name data broken down by time, geography, or any other variable. By default, male and female first name data from 1990 are combined with last name data from 2000.
 
 Files must have two fields: `name` and `cumulative_frequency`. By default, the package expects comma-delimited files, buy you can pass in `csv.DictReader` arguments with the paramenter `csv_args`.
 
@@ -143,9 +143,9 @@ my_format = '{given} {paternal} y {maternal}'
 Generating names with these examples:
 
 ````python
-from random_name import random_name
+from censusname import Censusname
 
-my_generator = random_name(nameformat=my_format, namefiles=my_files, max_frequencies=maximums, csv_args=my_csv_args)
+my_generator = Censusname(nameformat=my_format, namefiles=my_files, max_frequencies=maximums, csv_args=my_csv_args)
 
 # Generate a name of the format 'Given Paternal y Maternal'
 my_generator.generate()
@@ -178,31 +178,30 @@ my_generator.generate(paternal=province, maternal=province)
 Use the built-in data to fake middle names by randomly picking either a first or last name:
 
 ````python
+import censusname
 
-import random_name
-
-namefiles = random_name.NAMEFILES
+namefiles = censusname.NAMEFILES
 
 # Add a middle name entry to the name files
 namefiles['middle'] = {
-	'last': random_name.SURNAME2000,
-	'female': random_name.FEMALEFIRST1990,
-	'male': random_name.MALEFIRST1990
+	'last': censusname.SURNAME2000,
+	'female': censusname.FEMALEFIRST1990,
+	'male': censusname.MALEFIRST1990
 }
 
-rn_middle = random_name.random_name(namefiles, random_name.MAX_FREQUENCIES, '{given} {middle} {surname}')
+middlenames = censusname.Censusname(namefiles, censusname.MAX_FREQUENCIES, '{given} {middle} {surname}')
 
 # Generate a name in the format "given, middle, surname"
 # However, this might return unlikely names
-rn_middle.generate()
+middlenames.generate()
 'John Mary Smith'
 
 # Generated name will have a male first name and either a male given name or a surname as a middle name
-rn_middle.generate(given='male', middle=['male', 'last'])
+middlenames.generate(given='male', middle=['male', 'last'])
 'Charles Michael Brescia'
 
 # Generated name will have a female first name and either a female given name or a surname as a middle name
-rn_middle.generate(given='female', middle=['female', 'last'])
+middlenames.generate(given='female', middle=['female', 'last'])
 'Mildred Hoang Hutton'
 ````
 
@@ -219,28 +218,28 @@ my_formatters = {
 	'surname': [lambda x: "De " + x],
 }
 
-rn = random_name(formatters=my_formatters)
-rn.generate()
+cn = Censusname(formatters=my_formatters)
+cn.generate()
 'ekiM De Morgan'
 ````
 
-Additional formatters can be added to `random_name.generate`, they will be run in addition to any formatters included in the object.
+Additional formatters can be added to `Censusname.generate`, they will be run in addition to any formatters included in the object.
 
 ````python
 more_formatters = {
 	'given': [lambda x: x.replace('a', 'b')]
 }
 
-rn.generate(formatters=more_formatters)
+cn.generate(formatters=more_formatters)
 'nbhtbN De Scardino'
 ````
 
-Note that passing a formatters argument to `random_name` will exclude the default surname formatter. It's easy enough to keep it, though:
+Note that passing a formatters argument to `censusname` will exclude the default surname formatter. It's easy enough to keep it, though:
 
 ````python
-import random_name
+import censusname
 
 my_formatters = {
-	'surname': [random_name.formatters.recapitalize_surnames, custom_fuction]	
+	'surname': [censusname.formatters.recapitalize_surnames, custom_fuction]	
 }
 ````
