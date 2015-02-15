@@ -176,13 +176,6 @@ class Censusname(object):
 # helper generate function
 _C = Censusname()
 
+
 def generate(*args, **kwargs):
     return _C.generate(*args, **kwargs)
-
-def main():
-    # In the absence of tests, as least make sure specifying arguments doesn't break anything:
-    cn = Censusname('{given} {surname}', NAMEFILES, MAX_FREQUENCIES, csv_args={'delimiter': ','})
-    print(cn.generate())
-
-if __name__ == '__main__':
-    main()

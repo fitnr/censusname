@@ -59,10 +59,4 @@ setup(
 
     use_2to3=True,
 
-    entry_points={
-        'console_scripts': [
-            'censusname=censusname.censusname:main',
-        ],
-    },
-
 )

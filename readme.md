@@ -13,6 +13,11 @@ censusname.generate()
 'Jane Smith'
 ````
 
+Or, on the command line, run:
+````
+python -m censusname
+````
+
 The simplest way to customize Censusname is with the name_format argument
 It takes a string with two formatting keys: 'given' and 'surname' (The format should look familiar from Python's [str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin).
 
