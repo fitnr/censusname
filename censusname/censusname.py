@@ -13,7 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pkg_resources import resource_stream
+from pkg_resources import resource_stream, resource_exists
+from functools import partial
 import random
 import csv
 from . import formatters
@@ -22,10 +23,10 @@ from . import formatters
 # name (string)
 # cumul_frequency (float) number from 0 to 100
 
-SURNAME2000 = resource_stream('censusname', "data/dist.all.last.2000.csv")
-SURNAME1990 = resource_stream('censusname', "data/dist.all.last.1990.csv")
-MALEFIRST1990 = resource_stream('censusname', "data/dist.male.first.1990.csv")
-FEMALEFIRST1990 = resource_stream('censusname', "data/dist.female.first.1990.csv")
+SURNAME2000 = "data/dist.all.last.2000.csv"
+SURNAME1990 = "data/dist.all.last.1990.csv"
+MALEFIRST1990 = "data/dist.male.first.1990.csv"
+FEMALEFIRST1990 = "data/dist.female.first.1990.csv"
 
 # Name files don't contain every name, so hard coding the maximum frequency here.
 # This way we don't over-pick the least common names
@@ -152,15 +153,24 @@ class Censusname(object):
         else:
             return result
 
-    def pick_frequency_line(self, datastream, frequency, cumulativefield='cumulative_frequency'):
-        '''Given a frequency, pick a line from a csv with a cumulative frequency field'''
+    def pick_frequency_line(self, filename, frequency, cumulativefield='cumulative_frequency'):
+        '''Given a numeric frequency, pick a line from a csv with a cumulative frequency field'''
 
-        datastream.seek(0)
-        reader = csv.DictReader(datastream, **self.csv_args)
+        if resource_exists('censusname', filename):
+            datastream = resource_stream('censusname', filename)
+        else:
+            datastream = open(filename, mode='rb')
 
-        for line in reader:
-            if float(line[cumulativefield]) >= frequency:
-                return line
+        try:
+            reader = csv.DictReader(datastream, **self.csv_args)
+
+            for line in reader:
+                if float(line[cumulativefield]) >= frequency:
+                    return line
+        finally:
+            datastream.close()
+
+
 
 
 def main():
