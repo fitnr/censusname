@@ -21,7 +21,7 @@ except ImportError:
 setup(
     name='censusname',
 
-    version='0.2',
+    version='0.2.1',
 
     description='Generate random names',
 
