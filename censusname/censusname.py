@@ -171,7 +171,11 @@ class Censusname(object):
             datastream.close()
 
 
+# helper generate function
+_C = Censusname()
 
+def generate(*args, **kwargs):
+    return _C.generate(*args, **kwargs)
 
 def main():
     # In the absence of tests, as least make sure specifying arguments doesn't break anything:

@@ -5,82 +5,89 @@ Generate random names based on US Census data, or files that you provide.
 
 ### Basic use
 
+The simplest way to use censusname is with the `generate` method. It generates a names based on last and first name distributions in the 2000 Census. It has a 50/50 chance of providing a first name from either the `female` or `male` lists.
+
 ````python
-from censusname import Censusname
-
-cn = Censusname()
-
-cn.generate()
+import censusname
+censusname.generate()
 'Jane Smith'
 ````
-
-### Functions and Objects
-
-#### `Censusname`
-
-The `Censusname` object is the meat of the module. The formatting of the names it generates can be easily customized.
 
 The simplest way to customize Censusname is with the name_format argument
 It takes a string with two formatting keys: 'given' and 'surname' (The format should look familiar from Python's [str.format](https://docs.python.org/2/library/stdtypes.html#str.format) builtin).
 
 ````python
-from censusname import Censusname
+import censusname
 
 # Generate first names
-first = Censusname(nameformat='{given}')
-
-# Generate names in last, first format
-last_first = Censusname(nameformat='{surname}, {given')
-
-first.generate()
+censusname.generate(nameformat='{given}')
 'Linda'
 
-last_first.generate()
+# Generate names in last, first format
+censusname.generate(nameformat='{surname}, {given')
 'Nguyen, Pamela'
+````
+
+### Methods and Objects
+
+#### `generate`
+
+Generates random names. See below for details on valid arguments.
+
+#### `Censusname`
+
+The `generate` method is called on a default instance of the `Censusname` object. `Censusname` is the meat of the module, and instances a can be created with custom formatting and custom lists of names.
+
+Keyword arguments: `nameformat`, `namefiles`, `max_frequencies`, `formatters`, `capitalize`. 
+
+````python
+from censusname import Censusname
+
+last_first = Censusname(nameformat='{surname}, {given}')
+last_first.generate()
+'Lashley, Emily'
 ````
 
 #### `Censusname.generate`
 
-The `generate` function can be further customized. It also takes the nameformat argument, which overrides the default passed to `Censusname`:
-
 ````python
-cn = Censusname()
-
-cn.generate()
+C = Censusname()
+C.generate()
 'Michael Fox'
 
 # Add the same middle initial to all names
-cn.generate(nameformat='{given} J. {surname}')
+C.generate(nameformat='{given} J. {surname}')
 'Michael J. Fox'
 ````
 
 Each part of the name is also a keyword argument. The default data set includes given name files broken up into male and female names. The module can be told to always use a certain file:
 
 ````python
-rn.generate(given='female')
+C.generate(given='female')
 'Caroline Dippold'
 ````
 
-Since the argument to `nameformat` is passed to Str.format, use any string formatting options, like padding:
+Since the argument to `nameformat` is passed to Str.format, one can use any string formatting options, like padding:
 
 ````python
-cn.generate(nameformat='{given:10}', given='male')
+C.generate(nameformat='{given:10}', given='male')
 'Charles   '
 ````
 
 The default dataset in censusname gives all names totally capitalized, and censusname changes them to title case. This can be turned off with a the capitalize argument, which works for both `Censusname` and `Censusname.generate`:
 
 ````python
-cn = Censusname(capitalize=False)
-cn.generate()
-'JOSE PETRIE'
-
-cn2 = Censusname()
-cn2.generate(capitalize=False)
+C.generate(capitalize=False)
 'WES REAVES'
+
+# or, create your own Censusname object
+from censusname import Censusname
+C = Censusname(capitalize=False)
+C.generate()
+'JOSE PETRIE'
 ````
 
-Yes, it's a bit strange for `capitalize=False` to result in uppercase names. The false omits [str.capitalize](https://docs.python.org/2/library/stdtypes.html#str.capitalize), so the default capitalization from the raw data shines through, which happens to be all uppercase. You can customize the module arbitrary reformatting functions. Read on!
+Yes, it's a bit strange for `capitalize=False` to result in uppercase names. The false omits [str.capitalize](https://docs.python.org/2/library/stdtypes.html#str.capitalize), so the default capitalization from the raw data shines through, which happens to be all uppercase. You can customize the module arbitrary reformatting methods. Read on!
 
 ### Advanced
 
@@ -145,32 +152,32 @@ Generating names with these examples:
 ````python
 from censusname import Censusname
 
-my_generator = Censusname(nameformat=my_format, namefiles=my_files, max_frequencies=maximums, csv_args=my_csv_args)
+espana_nombre = Censusname(nameformat=my_format, namefiles=my_files, max_frequencies=maximums, csv_args=my_csv_args)
 
 # Generate a name of the format 'Given Paternal y Maternal'
-my_generator.generate()
+espana_nombre.generate()
 'Luis de Góngora y Argote'
 
 # Use a different format:
-my_generator.generate(nameformat='{given} {paternal} de {maternal}')
+espana_nombre.generate(nameformat='{given} {paternal} de {maternal}')
 'Pedro López de Ayala'
 
 # Pick a name from the Sevilla files:
-my_generator.generate(maternal='sevilla', paternal='sevilla')
+espana_nombre.generate(maternal='sevilla', paternal='sevilla')
 
 # Pick a female name from the Toledo files:
 # Note that any of the keys in my_files can be used as keyword arguments. The values should be keys from the respective dictionary.
-my_generator.generate(given='female', maternal='toledo', paternal='toledo')
+espana_nombre.generate(given='female', maternal='toledo', paternal='toledo')
 
 # By default, names are capitalized (title case).
 # Generate a name using given capitalization in the files:
-my_generator.generate(capitalize=False)
+espana_nombre.generate(capitalize=False)
 
 # By default, there's an equal probability of producing a name with a part from the Sevilla or Toledo lists.
 # You have to do a little extra to weight that probability.
 # Specify an 75% chance of a sevilla name, 25% chance of a toledo name:
 province = random.choice(['sevilla'] * 3 + ['toledo'])
-my_generator.generate(paternal=province, maternal=province)
+espana_nombre.generate(paternal=province, maternal=province)
 ````
 
 ### Example: Middle Names
@@ -207,9 +214,9 @@ middlenames.generate(given='female', middle=['female', 'last'])
 
 #### Formatters
 
-You can specify arbitary reformatting functions that are run on each part of the name before they are returned. By default, the package includes a surname formatter that tries to intelligently format raw names like OHALLORAN (to O'Halloran).
+You can specify arbitary reformatting methods that are run on each part of the name before they are returned. By default, the package includes a surname formatter that tries to intelligently format raw names like OHALLORAN (to O'Halloran).
 
-You can specify formatters with a dict that targets each part of a name. The formatters should be a list of functions.
+You can specify formatters with a dict that targets each part of a name. The formatters should be a list of methods.
 
 ````python
 
