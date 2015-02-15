@@ -36,6 +36,8 @@ setup(
         'random_name': ['data/*.csv'],
     },
 
+    zip_safe=True,
+
     entry_points={
         'console_scripts': [
             'random_name=random_name.random_name:main',
