@@ -12,9 +12,10 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import print_function
 
 from pkg_resources import resource_stream, resource_exists
-from functools import partial
+import codecs
 import random
 import csv
 from . import formatters
@@ -157,18 +158,19 @@ class Censusname(object):
         '''Given a numeric frequency, pick a line from a csv with a cumulative frequency field'''
 
         if resource_exists('censusname', filename):
-            datastream = resource_stream('censusname', filename)
+            with resource_stream('censusname', filename) as b:
+                g = codecs.iterdecode(b, 'ascii')
+                return self._pick_frequency_line(g, frequency, cumulativefield)
         else:
-            datastream = open(filename, mode='rb')
+            with open(filename, encoding='ascii') as g:
+                return self._pick_frequency_line(g, frequency, cumulativefield)
 
-        try:
-            reader = csv.DictReader(datastream, **self.csv_args)
+    def _pick_frequency_line(self, handle, frequency, cumulativefield):
+        reader = csv.DictReader(handle, **self.csv_args)
 
-            for line in reader:
-                if float(line[cumulativefield]) >= frequency:
-                    return line
-        finally:
-            datastream.close()
+        for line in reader:
+            if float(line[cumulativefield]) >= frequency:
+                return line
 
 
 # helper generate function

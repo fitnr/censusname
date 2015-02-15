@@ -44,6 +44,7 @@ setup(
 
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
     ],
 
     keywords='names development random',
@@ -55,6 +56,8 @@ setup(
     },
 
     zip_safe=True,
+
+    use_2to3=True,
 
     entry_points={
         'console_scripts': [
