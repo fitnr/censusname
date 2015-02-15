@@ -15,7 +15,7 @@ setup(
 
     author_email='contact@fakeisthenewreal.org',
 
-    license='MIT',
+    license='GPL',
 
     classifiers=[
         'Development Status :: 4 - Beta',
