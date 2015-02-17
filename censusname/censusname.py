@@ -15,6 +15,7 @@
 from __future__ import print_function
 
 from pkg_resources import resource_stream, resource_exists
+from contextlib import closing
 import codecs
 import random
 import csv
@@ -156,9 +157,8 @@ class Censusname(object):
 
     def pick_frequency_line(self, filename, frequency, cumulativefield='cumulative_frequency'):
         '''Given a numeric frequency, pick a line from a csv with a cumulative frequency field'''
-
         if resource_exists('censusname', filename):
-            with resource_stream('censusname', filename) as b:
+            with closing(resource_stream('censusname', filename)) as b:
                 g = codecs.iterdecode(b, 'ascii')
                 return self._pick_frequency_line(g, frequency, cumulativefield)
         else:

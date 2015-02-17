@@ -1,6 +1,5 @@
 from setuptools import setup
 
-
 try:
     from pypandoc import convert
     def read_md(f):
@@ -21,7 +20,7 @@ except ImportError:
 setup(
     name='censusname',
 
-    version='0.2.1',
+    version='0.2.1-1',
 
     description='Generate random names',
 
