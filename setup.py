@@ -1,30 +1,21 @@
 from setuptools import setup
 
 try:
-    from pypandoc import convert
-    def read_md(f):
-        try:
-            return convert(f, 'rst')
-        except IOError:
-            return ''
-
-except ImportError:
-    print("pypandoc module not found, could not convert Markdown to RST")
-    def read_md(f):
-        try:
-            return open(f, 'r').read()
-        except IOError:
-            return ''
-
+    readme = open('README.rst').read()
+except IOError:
+    try:
+        readme = open('README.md').read()
+    except IOError:
+        readme = ''
 
 setup(
     name='censusname',
 
-    version='0.2.1-1',
+    version='0.2.2',
 
     description='Generate random names',
 
-    long_description="Generate random names based on US Census data, or other data you provide.",
+    long_description=readme,
 
     url='https://github.com/fitnr/censusname',
 
