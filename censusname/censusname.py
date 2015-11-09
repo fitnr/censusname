@@ -97,13 +97,12 @@ class Censusname(object):
         else:
             self.capitalize = True
 
-    def generate(self, nameformat=None, capitalize=None, formatters={}, **kwargs):
+    def generate(self, nameformat=None, capitalize=None, formatters=None, **kwargs):
         '''Pick a random name form a specified list of name parts'''
-        if nameformat is None:
-            nameformat = self.nameformat
 
-        if capitalize is None:
-            capitalize = self.capitalize
+        nameformat = nameformat or self.nameformat
+        capitalize = capitalize or self.capitalize
+        formatters = formatters or {}
 
         lines = self._get_lines(kwargs)
         names = dict((k, v['name']) for k, v in list(lines.items()))
